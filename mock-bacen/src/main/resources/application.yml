@@ -1,0 +1,31 @@
+server:
+  port: ${SERVER_PORT:9191}
+
+spring:
+  rabbitmq:
+    host: ${SPRING_RABBITMQ_HOST:localhost}
+    port: ${SPRING_RABBITMQ_PORT:5672}
+    username: ${SPRING_RABBITMQ_USERNAME:guest}
+    password: ${SPRING_RABBITMQ_PASSWORD:guest}
+
+mock:
+  pix:
+    exchange: ${PIX_EXCHANGE:pix.exchange}
+    sendQueue: ${PIX_SEND_QUEUE:pix.send.queue}
+    responseRoutingKey: ${PIX_RESPONSE_ROUTING_KEY:pix.response}
+
+    # Latência variável (ms)
+    minDelayMs: ${PIX_MIN_DELAY_MS:200}
+    maxDelayMs: ${PIX_MAX_DELAY_MS:1500}
+
+    # "Timeout" via resposta muito atrasada (ms)
+    timeoutDelayMs: ${PIX_TIMEOUT_DELAY_MS:15000}
+    timeoutRate: ${PIX_TIMEOUT_RATE:0.05}     # 5%
+
+    # Erros intermitentes
+    errorRate: ${PIX_ERROR_RATE:0.10}         # 10% envia reasonCode=SIMULATE_ERROR
+    malformedRate: ${PIX_MALFORMED_RATE:0.03} # 3% envia JSON inválido
+    dropRate: ${PIX_DROP_RATE:0.02}           # 2% não responde (simula perda no BACEN)
+
+    # Duplicidade (opcional)
+    duplicateRate: ${PIX_DUPLICATE_RATE:0.02} # 2% envia resposta duplicada

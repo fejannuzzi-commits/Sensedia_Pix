@@ -1,0 +1,46 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: pixdb
+      POSTGRES_USER: pix
+      POSTGRES_PASSWORD: pix
+    ports: ["5432:5432"]
+
+  redis:
+    image: redis:7
+    ports: ["6379:6379"]
+
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    ports: ["5672:5672", "15672:15672"]
+
+  fraud-mock:
+    build:
+      context: ./mock-fraud
+    ports: ["9090:9090"]
+    environment:
+      SERVER_PORT: 9090
+
+  bacen-mock:
+    build:
+      context: ./mock-bacen
+    environment:
+      SERVER_PORT: 9191
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+      PIX_EXCHANGE: pix.exchange
+      PIX_SEND_QUEUE: pix.send.queue
+      PIX_RESPONSE_ROUTING_KEY: pix.response
+      PIX_MIN_DELAY_MS: 200
+PIX_MAX_DELAY_MS: 1500
+PIX_TIMEOUT_DELAY_MS: 15000
+PIX_TIMEOUT_RATE: 0.05
+PIX_ERROR_RATE: 0.10
+PIX_MALFORMED_RATE: 0.03
+PIX_DROP_RATE: 0.02
+PIX_DUPLICATE_RATE: 0.02
+    depends_on:
+      - rabbitmq
